@@ -6,8 +6,10 @@ import 'package:fat_app/view/widgets/search_bar.dart';
 import 'package:fat_app/view/widgets/subject_chips.dart';
 import 'package:fat_app/view/widgets/custom_app_bar.dart';
 import 'package:fat_app/view/widgets/custom_bottom_navigation_bar.dart';
-import 'package:fat_app/Model/Courses.dart';
-import 'package:fat_app/view/Teacher/addCoursesScreen.dart'; // Import AddCoursesScreen
+
+import '../Model/courses.dart';
+
+// Import AddCoursesScreen
 
 class CoursePage extends StatefulWidget {
   const CoursePage({Key? key}) : super(key: key);
@@ -124,7 +126,7 @@ class _CoursePage extends State<CoursePage> {
             child: const Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Expected class',
+                'Schedule Courses',
                 style: TextStyle(fontSize: 24, color: Colors.blue),
               ),
             ),
@@ -141,7 +143,7 @@ class _CoursePage extends State<CoursePage> {
                 return _buildClassCard(
                     course.subject,
                     course.teacher,
-                    '${course.startTime} - ${course.endTime}',
+                    '${course.startDate} - ${course.endDate}',
                     course.price,
                     course.description,
                     isRegistered,
@@ -196,44 +198,165 @@ class _CoursePage extends State<CoursePage> {
     String courseId,
   ) {
     return Card(
-      margin: const EdgeInsets.all(10),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
       child: Container(
-        color: Colors.green,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              Colors.green.shade50,
+            ],
+          ),
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              subject,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 5),
-            Text('Teacher: $teacher'),
-            const SizedBox(height: 5),
-            Text(time),
-            const SizedBox(height: 10),
-            Text(description),
-            const SizedBox(height: 5),
-            isRegistered
-                ? ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pushNamed('/listlecture', arguments: {
-                        'courseId': courseId,
-                      });
-                    },
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    child: const Text('Join'),
-                  )
-                : ElevatedButton(
-                    onPressed: () {
-                      _showConfirmationDialog(
-                          context, price, courseId, subject);
-                    },
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                    child: Text('Buy for \$$price'),
+            // Header section with subject and teacher
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.shade100,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  topRight: Radius.circular(15),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    subject,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.person,
+                        size: 16,
+                        color: Colors.green,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          teacher,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade700,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Content section
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Time section
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 16,
+                          color: Colors.green,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            time,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.black87,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Description section
+                    Expanded(
+                      child: Text(
+                        description,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+
+                    // Action button
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: isRegistered
+                          ? ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pushNamed('/listlecture', arguments: {
+                                  'courseId': courseId,
+                                });
+                              },
+                              icon: const Icon(Icons.play_circle_outline),
+                              label: const Text('Join Course'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            )
+                          : ElevatedButton.icon(
+                              onPressed: () {
+                                _showConfirmationDialog(
+                                    context, price, courseId, subject);
+                              },
+                              icon: const Icon(Icons.shopping_cart),
+                              label:
+                                  Text('Buy for \$${price.toStringAsFixed(2)}'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

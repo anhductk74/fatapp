@@ -1,4 +1,5 @@
 import 'package:fat_app/service/UserService.dart';
+import 'package:fat_app/view/loading/LoadingView.dart';
 import 'package:fat_app/view_auth/register_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -185,6 +186,12 @@ class _LoginPageState extends State<LoginPage> {
                             });
                             userService.signIn(_formkey, context,
                                 emailController.text, passwordController.text);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    LoadingView(duration: 3000),
+                              ),
+                            );
                           },
                           child: Text(
                             "Login",
@@ -326,9 +333,12 @@ class _LoginPageState extends State<LoginPage> {
 
       // In ra tên người dùng sau khi đăng nhập thành công
       print("Đăng nhập thành công: ${userCredential.user?.displayName}");
-
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => LoadingView(duration: 3000),
+        ),
+      );
       // Chuyển hướng sang HomePage sau khi đăng nhập thành công
-      Navigator.of(context).pushNamed('/interactlearning');
     } catch (e) {
       // Xử lý lỗi nếu có
       print("Đăng nhập thất bại: $e");

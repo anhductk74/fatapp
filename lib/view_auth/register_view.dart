@@ -353,6 +353,7 @@ class _RegisterState extends State<Register> {
                                     passwordController.text,
                                     rool,
                                     context);
+                                Navigator.of(context).pushNamed('/emailverify');
                               },
                               child: Text(
                                 "Register",

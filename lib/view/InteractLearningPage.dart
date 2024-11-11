@@ -415,7 +415,7 @@ class _InteractLearningPageState extends State<InteractLearningPage> {
         ],
       ),
       child: CustomBottomNavigationBar(
-        currentIndex: 2,
+        currentIndex: 0,
         onTap: (index) {
           switch (index) {
             case 0:
